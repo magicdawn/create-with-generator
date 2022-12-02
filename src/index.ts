@@ -19,7 +19,11 @@ async function runGenerator(options?: RunGeneratorOptions) {
   try {
     await runGeneratorInternal(options)
   } catch (e) {
-    console.error(e.stack || e)
+    if (e?.shouldThrow) {
+      throw e
+    } else {
+      console.error(e.stack || e)
+    }
   }
 }
 
@@ -43,6 +47,7 @@ async function runGeneratorInternal({
       cwd: join(__dirname, '../../'),
     })
     dirname = readPkgResult?.path
+    debug('detectd options.__dirname => %o', dirname)
   }
   if (!dirname) {
     console.error(
@@ -61,11 +66,21 @@ async function runGeneratorInternal({
 
   // decide name
   // fallback:
-  //  1. package.json create-with-generator field
+  //  1. package.json create-with-generator field ??? no-need for this
   //  2. dependcies `generator-*` or `@scope/generator-*`
   if (!name) {
-    // TODO implement this logic
-    throw new Error('not implement')
+    const genDeps = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies }).filter((name) => {
+      return /^generator-/.test(name) || /^@[-_\w]+\/generator-/.test(name)
+    })
+
+    if (!genDeps.length) {
+      const msg = `can not detect name automatically, your dependcies or devDependencies does not contain any generator-* dep`
+      throw new InternalError(msg)
+    }
+
+    // TODO: multiple generator-* deps ?
+    name = genDeps[0]
+    debug('detectd options.name => %o', name)
   }
 
   const { bareName, pkgName } = normalizeName(name)
@@ -114,5 +129,14 @@ function normalizeName(name: string) {
   return {
     bareName,
     pkgName,
+  }
+}
+
+class InternalError extends Error {
+  shouldThrow: boolean
+  constructor(msg: string, shouldThrow = true) {
+    super(msg)
+    Error.captureStackTrace(this, InternalError)
+    this.shouldThrow = shouldThrow
   }
 }

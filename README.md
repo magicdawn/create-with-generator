@@ -16,9 +16,19 @@ $ pnpm add create-with-generator
 
 ## API
 
+index.js
+
 ```js
-const createWithGenerator = require('create-with-generator')
+module.exports = require('create-with-generator').runGenerator()
 ```
+
+### options
+
+| key         | type     | required | description                                                                                                                                   |
+| ----------- | -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`      | `string` | `false`  | generator name, can be bareName(like `augular` or `@scope/augular` ) or fullname name(like `generator-angular` or `@scope/generator-angular`) |
+| `subname`   | `string` | `false`  | generator subname, defaults empty, stands for `yo <name>:app`                                                                                 |
+| `__dirname` | `string` | `false`  | your `__dirname`, used to detect who is calling `runGenerator`, if running in a symlinked environment, you need pass `__dirname` explicit     |
 
 ## Changelog
 

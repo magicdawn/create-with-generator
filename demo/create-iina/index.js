@@ -2,5 +2,5 @@
 
 module.exports = require('../../dist').runGenerator({
   __dirname,
-  name: 'generator-iina',
+  // name: 'generator-iina',
 })
