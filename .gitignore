@@ -11,3 +11,5 @@ coverage.*
 
 # ts
 **/*.tsbuildinfo
+/lib
+dist
