@@ -10,12 +10,12 @@ export default runGenerator
 export { runGenerator }
 
 export type RunGeneratorOptions = {
+  __dirname: string
   name?: string
   subname?: string
-  __dirname?: string
 }
 
-async function runGenerator(options?: RunGeneratorOptions) {
+async function runGenerator(options: RunGeneratorOptions) {
   try {
     await runGeneratorInternal(options)
   } catch (e) {
@@ -31,35 +31,11 @@ async function runGenerator(options?: RunGeneratorOptions) {
  * name can be `__dirname` or a specific name
  */
 
-async function runGeneratorInternal({
-  name,
-  subname,
-  __dirname: dirname,
-}: RunGeneratorOptions = {}) {
+async function runGeneratorInternal({ __dirname: dirname, name, subname }: RunGeneratorOptions) {
   debug('options: %O', { name, dirname })
   const env = yeoman.createEnv()
 
-  let readPkgResult: Awaited<ReturnType<typeof readPkgUp>> | undefined
-
-  // who is depending on this
-  if (!dirname) {
-    readPkgResult = await readPkgUp({
-      cwd: join(__dirname, '../../'),
-    })
-    dirname = readPkgResult?.path
-    debug('detectd options.__dirname => %o', dirname)
-  }
-  if (!dirname) {
-    console.error(
-      'can not locate `__dirname` automatically, MUST explicit specify in `runGenerator({ __dirname })`'
-    )
-  }
-
-  // if explicit specify __dirname
-  if (!readPkgResult) {
-    readPkgResult = await readPkgUp({ cwd: dirname })
-  }
-
+  const readPkgResult = await readPkgUp({ cwd: dirname })
   const pkg = readPkgResult?.packageJson
   const pkgPath = readPkgResult?.path
   if (!pkg || !pkgPath) return

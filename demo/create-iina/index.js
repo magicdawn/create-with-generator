@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-module.exports = require('../../dist').runGenerator({
+require('../../dist').runGenerator({
   __dirname,
-  // name: 'generator-iina',
+  // name: 'generator-iina', // optional, can be detected in your package.json
 })

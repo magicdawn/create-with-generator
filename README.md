@@ -16,19 +16,43 @@ $ pnpm add create-with-generator
 
 ## API
 
-index.js
-
 ```js
-module.exports = require('create-with-generator').runGenerator()
+require('create-with-generator').runGenerator({ __dirname })
 ```
 
 ### options
 
 | key         | type     | required | description                                                                                                                                   |
 | ----------- | -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `__dirname` | `string` | `true`   | your `__dirname`, used to detect who is calling `runGenerator`, if running in a symlinked environment, you need pass `__dirname` explicitly   |
 | `name`      | `string` | `false`  | generator name, can be bareName(like `augular` or `@scope/augular` ) or fullname name(like `generator-angular` or `@scope/generator-angular`) |
 | `subname`   | `string` | `false`  | generator subname, defaults empty, stands for `yo <name>:app`                                                                                 |
-| `__dirname` | `string` | `false`  | your `__dirname`, used to detect who is calling `runGenerator`, if running in a symlinked environment, you need pass `__dirname` explicit     |
+
+## Usage Guide
+
+example we have `generator-angular`, and we want to build the `create-angular` package
+
+- init package.json via `npm init`
+- install deps: `pnpm add create-with-generator 'generator-angular@*'`
+- add `index.js` with contents below
+- add `main` & `bin` field of package.json to `index.js`
+- tweak your package.json as you want, then run `npm publish`
+- start create using `pnpm create angular`
+
+### `index.js`
+
+```js
+require('create-with-generator').runGenerator({ __dirname })
+```
+
+### `package.json`
+
+```json
+{
+  "main": "index.js",
+  "bin": "index.js"
+}
+```
 
 ## Changelog
 
